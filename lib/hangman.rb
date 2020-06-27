@@ -86,7 +86,9 @@ end
 # "Welcome to hangman"
 
 class Game
+    attr_accessor :load
     def initialize
+        @load = false
         self.start_game
     end
 
@@ -100,12 +102,11 @@ class Game
         end
         if choice == "y"
             puts "you chose yes"
+            self.load = true
         else
             puts "you chose no"
         end
     end
-
-
 end
 
 def turn_counter
@@ -118,6 +119,49 @@ def turn_counter
     "The executioner pulls the lever, your body drops and your neck breaks. It is game over"]
 end
 
-game = Game.new()
+def check_if_exists(file)
+    if File.exist?("saves/#{file}")
+        puts "file exists"
+        return true
+    end
+    puts "file not found"
+    return false
+end
 
-puts turn_counter[0]
+def check_if_valid_textfile(file)
+    unless file.end_with?(".txt")
+        return false
+    end
+    true
+end
+
+def file_validation(file)
+    until check_if_valid_textfile(file) == true && check_if_exists(file) == true
+        if check_if_valid_textfile(file) == false
+            puts "Please input a valid file in the format {filename.txt} "
+            file = gets.chomp!
+        elsif check_if_exists(file) == false
+            puts "Error: File not found."
+            puts "Please input a valid file in the format {filename.txt} "
+            file = gets.chomp!
+        end
+    end
+    puts "Things are as they should be"
+end
+
+
+def play_game
+    game = Game.new()
+
+    if game.load == true
+        puts "Enter the filepath for your save "
+        file = gets.chomp!
+        file_validation(file)
+    end
+
+end
+
+# puts check_if_valid_textfile("test.txt")
+# puts check_if_exists("test.txt")
+
+play_game
