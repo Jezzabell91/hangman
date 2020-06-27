@@ -1,0 +1,1 @@
+{:finished_board => ["a", "p", "p", "l", "e"], :board => ["_", "_", "_", "l", "_"], :used_letters => {"l"=>1}}

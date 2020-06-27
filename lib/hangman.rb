@@ -69,7 +69,6 @@ class Used_Pile
         used_letters[letter] = 1
     end
 
-    
 end
 
 class Save_File
@@ -79,11 +78,28 @@ class Save_File
         @used_letters = args[:used_letters] 
         @board = args[:board]
         @finished_board = args[:finished_board]
-        @turn = used_letters.size
+    end
+
+    def save
+        puts "enter a name for the save file"
+        filename = gets.chomp! + ".txt"
+        File.open("saves/#{filename}", "w+") do |file| 
+            file.puts "{:finished_board => #{finished_board}, :board => #{board}, :used_letters => #{used_letters}}"
+        end
     end
 end
 
-# "Welcome to hangman"
+class Parse_File
+    attr_reader :args
+    # filtered_dictionary = File.open("filtered_dictionary.txt", "w+"){
+    #     |file| file.puts File.open("dictionary.txt").readlines.map(&strip).select(&between_five_twelve)
+    # }
+    def initialize(filename)
+        @args = eval(File.open("saves/#{filename}.txt").read)
+    end
+
+end
+
 
 class Game
     attr_accessor :load
@@ -121,10 +137,8 @@ end
 
 def check_if_exists(file)
     if File.exist?("saves/#{file}")
-        puts "file exists"
         return true
     end
-    puts "file not found"
     return false
 end
 
@@ -138,15 +152,21 @@ end
 def file_validation(file)
     until check_if_valid_textfile(file) == true && check_if_exists(file) == true
         if check_if_valid_textfile(file) == false
-            puts "Please input a valid file in the format {filename.txt} "
+            puts "Please input a valid file in the format {filename.txt} or enter exit to go back to the start"
             file = gets.chomp!
+            if file == "exit"
+                return false
+            end
         elsif check_if_exists(file) == false
             puts "Error: File not found."
-            puts "Please input a valid file in the format {filename.txt} "
+            puts "Please input a valid file in the format {filename.txt} enter exit to go back to the start"
             file = gets.chomp!
+            if file == "exit"
+                return false
+            end
         end
     end
-    puts "Things are as they should be"
+    true
 end
 
 
@@ -156,7 +176,12 @@ def play_game
     if game.load == true
         puts "Enter the filepath for your save "
         file = gets.chomp!
-        file_validation(file)
+        if file_validation(file) == false
+            play_game
+        end
+
+
+
     end
 
 end
@@ -164,4 +189,15 @@ end
 # puts check_if_valid_textfile("test.txt")
 # puts check_if_exists("test.txt")
 
-play_game
+# play_game
+
+# new_game = Hangman_Board.new({:word => Word.new({}).choose_word})
+# new_used_pile = Used_Pile.new({})
+# # p new_game
+# new_game.add_letter("l")
+# new_used_pile.check_if_used("l")
+# p new_game.board
+# p new_used_pile.used_letters
+# Save_File.new({:board => new_game.board, :finished_board => new_game.finished_board, :used_letters => new_used_pile.used_letters}).save
+new_game = Hangman_Board.new(Parse_File.new("apple").args)
+p new_game
