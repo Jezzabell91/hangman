@@ -26,48 +26,98 @@ class Word
 end
 
 class Hangman_Board
-    attr_accessor :initial_board 
+    attr_accessor :board 
     attr_reader :finished_board
     def initialize(args)
-        @finished_board = args[:initial_board] || args[:word].split(//)
-        @initial_board = args[:initial_board] || "".rjust(args[:word].length, '_').split(//)
+        @finished_board = args[:finished_board] || args[:word].split(//)
+        @board = args[:board] || "".rjust(args[:word].length, '_').split(//)
     end
 
     def add_letter(letter)
         finished_board.each_with_index do |element, index|
             if letter == element
-                initial_board[index] = letter
+                board[index] = letter
             end
         end
     end
 
     def check_win
-        if finished_board == initial_board
+        if finished_board == board
             puts "You win!"
         end
     end
 end
 
 class Used_Pile
+    attr_accessor :used_letters
+
+    def initialize(args)
+        @used_letters = args[:used_letters] || {} 
+    end
+
+    def check_if_used(letter)
+        if used_letters[letter] == nil
+            add_letter(letter)
+        else
+            puts "#{letter} has already been tried. Choose again."
+        end
+    end
+
+    private
+
+    def add_letter(letter)
+        used_letters[letter] = 1
+    end
+
+    
+end
+
+class Save_File
+    attr_reader :used_letters, :board, :finished_board
+
+    def initialize(args)
+        @used_letters = args[:used_letters] 
+        @board = args[:board]
+        @finished_board = args[:finished_board]
+        @turn = used_letters.size
+    end
+end
+
+# "Welcome to hangman"
+
+class Game
+    def initialize
+        self.start_game
+    end
+
+    def start_game 
+        puts "Welcome to hangman!"
+        puts "Would you like to load a previous save file? [y/n] "
+        choice = gets.chomp!.downcase
+        until choice == "y" || choice == "n"
+            puts "Please use a valid input. "
+            choice = gets.chomp!.downcase
+        end
+        if choice == "y"
+            puts "you chose yes"
+        else
+            puts "you chose no"
+        end
+    end
+
 
 end
 
-# List of things to serialize
-# finished board - gives us the word to complete
-# current board - progress
-# used letter pile
-# number of turns left
-# 
+def turn_counter
+    ["The executioner wakes you up and binds your hands.",
+    "You are led out of your cell and into the town's square",
+    "The crowd jeers when you start walking up the gallows' thirteen steps",
+    "You take your place below the noose and gaze into the crowd. There's not a friend amongst them.",
+    "The executioner puts the noose around your neck.",
+    "You prepare yourself and are ready to die. One more moment and it will be over",
+    "The executioner pulls the lever, your body drops and your neck breaks. It is game over"]
+end
 
-# new_word = Word.new(:path => "../dictionary_12.txt", :upper_length_limit => 12, :lower_length_limit => 5).choose_word
-# puts new_word
+game = Game.new()
 
-new_board = Hangman_Board.new(:word => Word.new({}).choose_word)
-p new_board.finished_board
-p new_board.initial_board
-new_board.add_letter("p")
-new_board.add_letter("a")
-new_board.add_letter("l")
-new_board.add_letter("e")
-new_board.check_win
-p new_board.initial_board
+puts turn_counter[0]
