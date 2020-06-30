@@ -1,1 +1,1 @@
-{:finished_board => ["a", "p", "p", "l", "e"], :board => ["_", "p", "p", "_", "_"], :used_letters => {"p"=>1}}
+{:finished_board => ["a", "p", "p", "l", "e"], :board => ["_", "p", "p", "_", "_"], :used_letters => {"p"=>1}, :solve_attempts => {}}

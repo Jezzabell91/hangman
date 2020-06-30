@@ -91,9 +91,7 @@ end
 
 class Parse_File
     attr_reader :args
-    # filtered_dictionary = File.open("filtered_dictionary.txt", "w+"){
-    #     |file| file.puts File.open("dictionary.txt").readlines.map(&strip).select(&between_five_twelve)
-    # }
+
     def initialize(filename)
         @args = eval(File.open("saves/#{filename}.txt").read)
     end
@@ -186,6 +184,14 @@ def play_game
 
 end
 
+class GameState
+    attr_accessor :hangman_board, :used_pile
+    def initialize(args)
+        @hangman_board = 
+        @used_pile = args[:used_pile] 
+    end
+end
+
 # puts check_if_valid_textfile("test.txt")
 # puts check_if_exists("test.txt")
 
@@ -199,5 +205,6 @@ end
 # p new_game.board
 # p new_used_pile.used_letters
 # Save_File.new({:board => new_game.board, :finished_board => new_game.finished_board, :used_letters => new_used_pile.used_letters}).save
-new_game = Hangman_Board.new(Parse_File.new("apple").args)
+new_game = GameState.new({:hangman_board => Hangman_Board.new(Parse_File.new("apple").args), :used_pile => Used_Pile.new(Parse_File.new("apple").args)}) 
+new_game.add_letter("e")
 p new_game
